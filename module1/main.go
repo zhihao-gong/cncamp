@@ -9,7 +9,7 @@ func consumer(messages <-chan int, done <-chan bool) {
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
-	for _ = range ticker.C {
+	for range ticker.C {
 		select {
 		case <-done:
 			fmt.Println("child process interrupt...")
@@ -24,7 +24,7 @@ func producer(messages chan<- int, done chan bool) {
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 
-	for _ = range ticker.C {
+	for range ticker.C {
 		select {
 		case <-done:
 			fmt.Println("parent process interrupt...")

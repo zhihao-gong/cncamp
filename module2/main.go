@@ -32,6 +32,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getRemoteIp(r *http.Request) string {
+	// reference: https://stackoverflow.com/a/55738279
 	IPAddress := r.Header.Get("X-Real-Ip")
 	if IPAddress == "" {
 		IPAddress = r.Header.Get("X-Forwarded-For")

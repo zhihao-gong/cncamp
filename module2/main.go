@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	// Enable profiling, visit endpoint /debug/pprof for stats
 	_ "net/http/pprof"
@@ -25,14 +26,24 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("VERSION", version)
 	}
 
-	// Log client IP and HTTP status code
-	clientIP := r.RemoteAddr
+	// Log client IP
+	clientIP := getRemoteIp(r)
 	fmt.Printf("Client IP: %s", clientIP)
 }
 
 func getRemoteIp(r *http.Request) string {
-	// reference:
-	return ""
+	IPAddress := r.Header.Get("X-Real-Ip")
+	if IPAddress == "" {
+		IPAddress = r.Header.Get("X-Forwarded-For")
+		IPAddresses := strings.Split(IPAddress, ",")
+
+		// Return the first IP address which is the client IP
+		return strings.TrimSpace(IPAddresses[0])
+	}
+	if IPAddress == "" {
+		IPAddress = r.RemoteAddr
+	}
+	return IPAddress
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
